@@ -22,6 +22,32 @@ class McpServerKey(models.Model):
     expiration_date = fields.Datetime()
     expired_on = fields.Datetime(readonly=True)
 
+    def _clear_mcp_server_key_cache(self):
+        self.env.registry.clear_cache()
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._clear_mcp_server_key_cache()
+        return records
+
+    def write(self, vals):
+        result = super().write(vals)
+        if vals.keys() & {
+            "server_id",
+            "hashed_key",
+            "state",
+            "expiration_date",
+            "user_id",
+        }:
+            self._clear_mcp_server_key_cache()
+        return result
+
+    def unlink(self):
+        result = super().unlink()
+        self._clear_mcp_server_key_cache()
+        return result
+
     def expire_key(self):
         self.filtered(lambda key: key.state == "active").write(
             {
@@ -29,7 +55,6 @@ class McpServerKey(models.Model):
                 "expired_on": fields.Datetime.now(),
             }
         )
-        self._get_mcp_server_by_key.clear_cache(self)
 
     _sql_constraints = [
         ("key_uniq", "unique(hashed_key)", "The key must be unique"),
