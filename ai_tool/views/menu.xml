@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 Dixmit
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <menuitem
+        id="ai_menu_root"
+        name="AI"
+        groups="base.group_system"
+        web_icon="ai_tool,static/description/icon.png"
+        sequence="45"
+    />
+</odoo>
