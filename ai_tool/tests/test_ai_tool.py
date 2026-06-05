@@ -47,3 +47,23 @@ class TestAiTool(TransactionCase):
         tool.kind = "record"
         with self.assertRaises(ValueError):
             tool._execute_tool(message="Hello World", record=self.partner)
+
+    def test_code_tool(self):
+        tool = self.env["ai.tool"].create(
+            {
+                "name": "echo_message",
+                "description": "Echo a message.",
+                "input_schema": '{"message": {"type": "string"}}',
+                "required_inputs": "message",
+                "output_schema": '{"message": {"type": "string"}}',
+                "code": "result = {'message': args.get('message')}",
+            }
+        )
+        definition = tool._get_tool_definition()
+        self.assertEqual(definition["inputSchema"]["required"], ["message"])
+        self.assertEqual(
+            definition["inputSchema"]["properties"]["message"]["type"], "string"
+        )
+        self.assertEqual(
+            tool._execute_tool(message="Hello World"), {"message": "Hello World"}
+        )

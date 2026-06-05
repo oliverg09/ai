@@ -12,8 +12,37 @@
                     <group>
                         <field name="name" />
                         <field name="description" />
+                        <field name="implementation" />
                         <field name="kind" />
+                        <field
+                            name="model_id"
+                            invisible="implementation != 'method' and kind != 'record'"
+                        />
+                        <field
+                            name="function_name"
+                            invisible="implementation != 'method'"
+                        />
                     </group>
+                    <notebook invisible="implementation != 'code'">
+                        <page string="Code" name="code">
+                            <field name="code" widget="ace" nolabel="1" />
+                        </page>
+                        <page string="Schema" name="schema">
+                            <group>
+                                <field name="required_inputs" />
+                                <field
+                                    name="input_schema"
+                                    widget="text"
+                                    placeholder='{"partner_id": {"type": "integer"}}'
+                                />
+                                <field
+                                    name="output_schema"
+                                    widget="text"
+                                    placeholder='{"name": {"type": "string"}}'
+                                />
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -33,6 +62,8 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name" />
+                <field name="implementation" />
+                <field name="kind" />
             </list>
         </field>
     </record>
